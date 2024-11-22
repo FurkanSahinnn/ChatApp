@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="Core\Application\Features\CQRS\" />
     <Folder Include="Persistence\Migrations\" />
   </ItemGroup>
 

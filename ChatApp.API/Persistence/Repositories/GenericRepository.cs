@@ -1,38 +1,50 @@
 ﻿using ChatApp.API.Core.Application.Interfaces;
+using ChatApp.API.Persistence.Context;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace ChatApp.API.Persistence.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class, new()
     {
-        public Task CreateAsync(T entity)
+
+        private readonly JsonWebTokenContext _dbContext;
+
+        public GenericRepository(JsonWebTokenContext DbContext)
         {
-            throw new NotImplementedException();
+            _dbContext = DbContext;            
+        }
+        public async Task CreateAsync(T entity)
+        {
+            await _dbContext.Set<T>().AddAsync(entity);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public Task DeleteAsync(T entity)
+        public async Task DeleteAsync(T entity)
         {
-            throw new NotImplementedException();
+            _dbContext.Set<T>().Remove(entity);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public Task<List<T>> GetAllAsync()
+        public async Task<List<T>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _dbContext.Set<T>().AsNoTracking().ToListAsync();
         }
 
-        public Task<T> GetByIdAsync(int id)
+        public async Task<T?> GetByIdAsync(object id)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Set<T>().FindAsync(id);
         }
 
-        public Task Update(T entity)
+        public async Task UpdateAsync(T entity)
         {
-            throw new NotImplementedException();
+            _dbContext.Set<T>().Update(entity);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public Task<T> WhereAsync(Expression<Func<T, bool>> predicate)
+        public async Task<T?> WhereAsync(Expression<Func<T, bool>> predicate)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Set<T>().AsNoTracking().SingleOrDefaultAsync(predicate);
         }
     }
 }

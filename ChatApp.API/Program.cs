@@ -1,4 +1,6 @@
+using ChatApp.API.Core.Application.Interfaces;
 using ChatApp.API.Persistence.Context;
+using ChatApp.API.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
 // Add services to the container.
+services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

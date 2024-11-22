@@ -7,12 +7,12 @@ namespace ChatApp.API.Core.Application.Interfaces
 
         Task<List<T>> GetAllAsync();
 
-        Task<T> GetByIdAsync(int id); // object id
-        Task<T> WhereAsync(Expression<Func<T, bool>> predicate);
+        Task<T?> GetByIdAsync(object id); // int id
+        Task<T?> WhereAsync(Expression<Func<T, bool>> predicate);
 
         Task CreateAsync(T entity);
 
-        Task Update(T entity);
+        Task UpdateAsync(T entity);
 
         Task DeleteAsync(T entity);
     }
