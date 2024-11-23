@@ -19,6 +19,12 @@ namespace ChatApp.API.Infrastructures.Tools
             {
                 claims.Add(new Claim(ClaimTypes.Name, dto.UserName));
             }
+
+            if (dto.Email != null)
+            {
+                claims.Add(new Claim(ClaimTypes.Email, dto.Email));
+            }
+
             if (dto.Role != null)
             {
                 claims.Add(new Claim(ClaimTypes.Role, dto.Role));

@@ -1,0 +1,38 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model LoginModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Sign In</title>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <link rel="stylesheet" href="~/context/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="container">
+            <form class="w-50 m-10 p-5 mx-auto" method="post" asp-action="Login" asp-controller="Account">
+                <div class="mb-3">
+                    <label for="@Model.Email" class="form-label">Email:</label>
+                    <span asp-validation-for="@Model.Email" class="text-danger"></span>
+                    <input type="text" value="" class="form-control" asp-for="@Model.Email" />
+                
+                </div>
+                <div class="mb-3">
+                    <label for="@Model.Password" class="form-label">Password:</label>
+                    <span asp-validation-for="@Model.Password" class="text-danger"></span>
+                    <input type="password" class="form-control" value="" asp-for="@Model.Password" />
+                </div>
+                <!-- Genel hata mesajları -->
+                <div>
+                    <span asp-validation-summary="All" class="text-danger"></span>
+                </div>  
+                <input type="submit" value="Sign In" class="btn btn-success w-100 p-2"/>
+            </form>
+    </div>
+    <style src="~/context/js/bootstrap.bundle.min.js"></style>
+</body>
+</html>

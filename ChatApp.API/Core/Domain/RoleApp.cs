@@ -6,9 +6,11 @@
         public string? RoleName { get; set; }
 
         public List<UserApp> UserApp { get; set; }
+        /*
         public RoleApp()
         {
             UserApp = new List<UserApp>();
         }
+        */
     }
 }

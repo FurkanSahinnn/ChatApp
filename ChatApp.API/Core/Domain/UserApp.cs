@@ -11,10 +11,11 @@
         public int RoleAppId { get; set; } = 2;
 
         public RoleApp RoleApp { get; set; }
-
+        /*
         public UserApp()
         {
             RoleApp = new RoleApp();
         }
+        */
     }
 }

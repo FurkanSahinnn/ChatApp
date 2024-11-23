@@ -23,7 +23,7 @@ services.AddMediatR(Assembly.GetExecutingAssembly());
 services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(option =>
 {
     var tokenOptions = builder.Configuration.GetSection("TokenOptions").Get<CustomTokenOptions>();
-    option.RequireHttpsMetadata = true; // false
+    option.RequireHttpsMetadata = false;
 
     option.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
     {

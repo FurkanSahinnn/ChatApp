@@ -20,7 +20,7 @@ namespace ChatApp.API.Core.Application.Features.CQRS.Handlers
         {
             var userAppResponseDto = new CheckUserResponseDto();
 
-            var user = await _repositoryUserApp.WhereAsync(x => x.Name == request.Username && x.Password == request.Password);
+            var user = await _repositoryUserApp.WhereAsync(x => x.Email == request.Email && x.Password == request.Password);
             if (user == null)
             {
                 userAppResponseDto.IsUserAvailable = false;
@@ -28,6 +28,7 @@ namespace ChatApp.API.Core.Application.Features.CQRS.Handlers
             {
                 userAppResponseDto.Id = user.Id;
                 userAppResponseDto.UserName = user.Name;
+                userAppResponseDto.Email = user.Email;
                 var roleName = await _repositoryRoleApp.WhereAsync(x => x.Id == user.RoleAppId);
                 userAppResponseDto.Role = roleName?.RoleName;
 
