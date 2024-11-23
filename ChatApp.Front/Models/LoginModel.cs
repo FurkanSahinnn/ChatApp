@@ -5,8 +5,8 @@ namespace ChatApp.Front.Models
     public class LoginModel
     {
         [Required(ErrorMessage = "Email is required.")]
-        public string Email { get; set; } = null!;
+        public string Email { get; set; }
         [Required(ErrorMessage = "Password is required.")]
-        public string Password { get; set; } = null!;
+        public string Password { get; set; }
     }
 }

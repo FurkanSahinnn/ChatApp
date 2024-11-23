@@ -23,7 +23,6 @@ namespace ChatApp.Front.Controllers
         {
             return View(new RegisterModel());
         }
-
         [HttpPost]
         public async Task<IActionResult> Register(RegisterModel model)
         {
@@ -54,73 +53,7 @@ namespace ChatApp.Front.Controllers
         public IActionResult Login()
         {
             return View(new LoginModel());
-        }
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginModel model)
-        {
-            
-            if (!ModelState.IsValid)
-            {
-                return View(model); // Model doğrulama hataları varsa tekrar formu göster
-            }
-            
-
-            try
-            {
-                var client = _httpClientFactory.CreateClient();
-                var content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
-
-                var response = await client.PostAsync("http://localhost:5221/api/Auth/Login", content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var tokenModel = JsonSerializer.Deserialize<TokenResponseModel>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions
-                    {
-                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                    });
-
-                    if (tokenModel != null)
-                    {
-                        JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-                        var token = handler.ReadJwtToken(tokenModel.Token);
-
-                        var claims = token.Claims.ToList();
-                        claims.Add(new Claim("accessToken", tokenModel.Token));
-
-                        var claimsIdentity = new ClaimsIdentity(
-                            claims,
-                            JwtBearerDefaults.AuthenticationScheme);
-
-                        var props = new AuthenticationProperties
-                        {
-                            ExpiresUtc = tokenModel.TokenExpiration,
-                            IsPersistent = true,
-                        };
-
-                        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-                        await HttpContext.SignInAsync(
-                            JwtBearerDefaults.AuthenticationScheme,
-                            claimsPrincipal,
-                            props);
-
-                        return RedirectToAction("Index", "Home");
-                    }
-                }
-
-                // API 200 dönmezse hata mesajı ekle
-                ModelState.AddModelError("", "Invalid email or password.");
-            }
-            catch (Exception ex)
-            {
-                // Beklenmeyen hatalar için genel hata mesajı ekle
-                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-            }
-
-            return View(model);
-        }
-
-        /*
+        }  
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel model)
         {
@@ -138,8 +71,9 @@ namespace ChatApp.Front.Controllers
                 // API üzerinden kullanıcının doğruluğunu kontrol edip JWT token döndürüp,
                 // sonucu alıyoruz.
                 var response = await client.PostAsync("http://localhost:5221/api/Auth/Login", content);
-                
+
                 // HTTP yanıt kodunun 200 (OK) serisinde olup olmadığını kontrol et.
+                Console.WriteLine(response.IsSuccessStatusCode);
                 if (response.IsSuccessStatusCode)
                 {
                     // API'den dönen JSON içeriğini string olarak oku
@@ -187,12 +121,10 @@ namespace ChatApp.Front.Controllers
                 {
                     ModelState.AddModelError("", "Email or Password incorrect.");
                 }
-                
-                
-                return View();
+                return View(model);
             }
             return View(model);
-        } */
+        } 
     }
 
 }

@@ -3,7 +3,7 @@
 *@
 @model LoginModel
 @{
-    Layout = null;
+    
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -19,7 +19,6 @@
                     <label for="@Model.Email" class="form-label">Email:</label>
                     <span asp-validation-for="@Model.Email" class="text-danger"></span>
                     <input type="text" value="" class="form-control" asp-for="@Model.Email" />
-                
                 </div>
                 <div class="mb-3">
                     <label for="@Model.Password" class="form-label">Password:</label>
@@ -27,10 +26,9 @@
                     <input type="password" class="form-control" value="" asp-for="@Model.Password" />
                 </div>
                 <!-- Genel hata mesajları -->
-                <div>
-                    <span asp-validation-summary="All" class="text-danger"></span>
-                </div>  
-                <input type="submit" value="Sign In" class="btn btn-success w-100 p-2"/>
+                <div asp-validation-summary="ModelOnly" class="text-danger">
+                </div>
+            <input type="submit" value="Sign In" class="btn btn-success w-100 p-2"/>
             </form>
     </div>
     <style src="~/context/js/bootstrap.bundle.min.js"></style>
