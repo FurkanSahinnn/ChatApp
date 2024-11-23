@@ -31,6 +31,7 @@ namespace ChatApp.API.Persistence.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RoleAppId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

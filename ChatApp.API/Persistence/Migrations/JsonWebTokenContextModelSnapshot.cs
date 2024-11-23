@@ -51,6 +51,9 @@ namespace ChatApp.API.Persistence.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("RoleAppId")
                         .HasColumnType("int");
 
