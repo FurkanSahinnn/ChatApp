@@ -1,7 +1,6 @@
-﻿using ChatApp.API.Core.Application.Features.CQRS.Commands;
-using ChatApp.API.Core.Application.Features.CQRS.Queries;
+﻿using ChatApp.API.Core.Application.Features.CQRS.Queries;
 using ChatApp.API.Core.Application.Options;
-using ChatApp.API.Infrastructures.Tools;
+using ChatApp.API.JwtFeatures;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,14 +23,20 @@ namespace ChatApp.API.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> Register(RegisterUserCommandRequest request)
+        public async Task<IActionResult> Register(RegisterUserQueryForRequest request)
         {
-            await _mediator.Send(request);
+            var dto = await _mediator.Send(request);
+
+            if (dto.IsExist)
+            {
+                return BadRequest("Username or Password is already used.");
+            }
+            
             return Created("", request);
         }
 
         [HttpPost("Login")]
-        public async Task<IActionResult> Login(CheckUserQueryForRequest request)
+        public async Task<IActionResult> Login(LoginUserQueryForRequest request)
         {
             var dto = await _mediator.Send(request);
             if (dto.IsUserAvailable)
@@ -39,7 +44,7 @@ namespace ChatApp.API.Controllers
                 var createdToken = TokenGenerator.CreateToken(_options, dto);
                 return Created("", createdToken);
             }
-            return BadRequest("Username or Password is not correct.");
+            return Unauthorized("Invalid Authentication.");
             
         }
     }

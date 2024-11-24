@@ -43,7 +43,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 // Add DbContext
-services.AddDbContext<JsonWebTokenContext>(options =>
+services.AddDbContext<AuthenticationContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer"));
 });

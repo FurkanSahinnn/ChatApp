@@ -1,6 +1,6 @@
 ﻿namespace ChatApp.API.Core.Application.Dtos
 {
-    public class CheckUserResponseDto
+    public class LoginUserResponseDto
     {
         public int Id { get; set; }
         public string? UserName { get; set; }

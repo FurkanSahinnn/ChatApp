@@ -8,7 +8,7 @@ namespace ChatApp.API.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<UserApp> builder)
         {
-            builder.HasOne(x => x.RoleApp).WithMany(x => x.UserApp).HasForeignKey(x => x.RoleAppId);
+            //builder.HasOne(x => x.RoleApp).WithMany(x => x.UserApp).HasForeignKey(x => x.RoleAppId);
         }
     }
 }

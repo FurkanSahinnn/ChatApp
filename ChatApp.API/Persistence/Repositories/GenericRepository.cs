@@ -8,9 +8,9 @@ namespace ChatApp.API.Persistence.Repositories
     public class GenericRepository<T> : IGenericRepository<T> where T : class, new()
     {
 
-        private readonly JsonWebTokenContext _dbContext;
+        private readonly AuthenticationContext _dbContext;
 
-        public GenericRepository(JsonWebTokenContext DbContext)
+        public GenericRepository(AuthenticationContext DbContext)
         {
             _dbContext = DbContext;            
         }

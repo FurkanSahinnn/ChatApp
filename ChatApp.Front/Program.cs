@@ -1,8 +1,10 @@
+using ChatApp.Front.TwoFactorService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 // DI Container
+builder.Services.Configure<TwoFactorOptions>(builder.Configuration.GetSection("TwoFactorOptions"));
 builder.Services.AddHttpClient(); // IHttpClientFactory servisi eklendi
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddCookie(
     JwtBearerDefaults.AuthenticationScheme, options => {
@@ -14,7 +16,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddCo
         options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;  // Gelen request'i Cookie'nin policy'si ile esler. (Http - http veya https - https)
         options.Cookie.Name = "JWTCookie";
     });
-
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.Name = "RegisterSession";
+});
 var app = builder.Build();
 // Static Files
 app.UseStaticFiles();
@@ -26,6 +32,7 @@ app.UseRouting();
 app.UseAuthentication();
 // Authorization
 app.UseAuthorization();
+app.UseSession();
 
 app.UseEndpoints(endpoints =>
 {

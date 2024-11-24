@@ -9,6 +9,7 @@ namespace ChatApp.Front.Models
         public string Username { get; set; }
 
         [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email format.")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Password is required.")]
@@ -16,6 +17,7 @@ namespace ChatApp.Front.Models
         public string Password { get; set; }
 
         [Compare("Password", ErrorMessage = "Passwords do not match.")]
+        [Required(ErrorMessage = "Repeat Password is required.")]
         public string ConfirmPassword { get; set; }
     }
 }

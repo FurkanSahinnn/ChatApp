@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ChatApp.API.Persistence.Migrations
 {
-    [DbContext(typeof(JsonWebTokenContext))]
-    partial class JsonWebTokenContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(AuthenticationContext))]
+    partial class AuthenticationContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -20,22 +20,6 @@ namespace ChatApp.API.Persistence.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ChatApp.API.Core.Domain.RoleApp", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("RoleName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RoleApps");
-                });
 
             modelBuilder.Entity("ChatApp.API.Core.Domain.UserApp", b =>
                 {
@@ -54,30 +38,12 @@ namespace ChatApp.API.Persistence.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoleAppId")
-                        .HasColumnType("int");
+                    b.Property<string>("Role")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoleAppId");
-
                     b.ToTable("UserApps");
-                });
-
-            modelBuilder.Entity("ChatApp.API.Core.Domain.UserApp", b =>
-                {
-                    b.HasOne("ChatApp.API.Core.Domain.RoleApp", "RoleApp")
-                        .WithMany("UserApp")
-                        .HasForeignKey("RoleAppId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("RoleApp");
-                });
-
-            modelBuilder.Entity("ChatApp.API.Core.Domain.RoleApp", b =>
-                {
-                    b.Navigation("UserApp");
                 });
 #pragma warning restore 612, 618
         }

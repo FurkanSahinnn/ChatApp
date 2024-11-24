@@ -7,16 +7,56 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.Extensions.Options;
+using ChatApp.Front.TwoFactorService;
 
 namespace ChatApp.Front.Controllers
 {
     public class AccountController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IOptions<TwoFactorOptions> _twoFactorOptions;
 
-        public AccountController(IHttpClientFactory httpClientFactory)
+        public AccountController(IHttpClientFactory httpClientFactory, IOptions<TwoFactorOptions> twoFactorOptions)
         {
             _httpClientFactory = httpClientFactory;
+            _twoFactorOptions = twoFactorOptions;
+        }
+        public IActionResult TwoFactor()
+        {
+            // Formu görüntüler
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TwoFactor(TwoFactorModel model)
+        {
+            if (TempData["registerModel"] == null)
+            {
+                // Eğer RegisterModel yoksa kullanıcıyı Register sayfasına geri yönlendir
+                return RedirectToAction("Register");
+            }
+            var registerModel = TempData["registerModel"];
+
+            // code verification yap.
+            var client = _httpClientFactory.CreateClient();
+            var content = new StringContent(JsonSerializer.Serialize(registerModel), Encoding.UTF8, "application/json");
+
+            // Web API'ye POST isteği gönder
+            var response = await client.PostAsync("http://localhost:5221/api/auth/register", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Başarılı kayıt sonrası giriş sayfasına yönlendir
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                // Hata mesajını ekrana yazdır
+                ModelState.AddModelError("", "An error occurred while registering the user.");
+                return View(model);
+            }
+
         }
 
         public IActionResult Register()
@@ -30,7 +70,8 @@ namespace ChatApp.Front.Controllers
             {
                 return View(model); // Model hataları varsa tekrar formu göster
             }
-
+            //TempData["registerModel"] = model;
+            // code verification yap.
             var client = _httpClientFactory.CreateClient();
             var content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
 
@@ -48,10 +89,12 @@ namespace ChatApp.Front.Controllers
                 ModelState.AddModelError("", "An error occurred while registering the user.");
                 return View(model);
             }
+            //return RedirectToAction("TwoFactor");
         }
 
         public IActionResult Login()
         {
+            // Formu görüntüler
             return View(new LoginModel());
         }  
         [HttpPost]

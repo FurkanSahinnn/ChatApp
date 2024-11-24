@@ -3,7 +3,7 @@ using MediatR;
 
 namespace ChatApp.API.Core.Application.Features.CQRS.Queries
 {
-    public class CheckUserQueryForRequest : IRequest<CheckUserResponseDto>
+    public class LoginUserQueryForRequest : IRequest<LoginUserResponseDto>
     {
         //public string Username { get; set; } = null!;
 
