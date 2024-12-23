@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 namespace ChatApp.API.Controllers
 {
     // [Authorize(Roles="Admin")] --> The Auth can be seen from admin.
-    // [Authorize(Roles="Admin,Member")] --> The Auth can be ssen from admin and members.
+    // [Authorize(Roles="Admin,Member")] --> The Auth can be seen from admin and members.
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase

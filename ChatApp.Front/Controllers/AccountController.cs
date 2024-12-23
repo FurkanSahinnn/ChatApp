@@ -157,8 +157,9 @@ namespace ChatApp.Front.Controllers
                             claimsPrincipal,
                             props);
 
+                        
                         // Kullanıcıyı HomeController içindeki Index action metoduna yönlendir
-                        return RedirectToAction("Index", "Home"); 
+                        return RedirectToAction("HomePage", "Home"); 
                     }
                 } else
                 {
