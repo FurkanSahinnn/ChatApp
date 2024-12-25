@@ -1,0 +1,46 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model TwoFactorRegisterViewModel
+
+<div class="row">
+
+    <div class="col-md-4  offset-md-4">
+
+        <h4>İki Adımlı Kimlik Doğrulama</h4>
+        <hr />
+
+        <form asp-action="TwoFactorRegister" method="post">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="VerificationCode"></label>
+                <input asp-for="VerificationCode" class="form-control" />
+                <span asp-validation-for="VerificationCode" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" class="btn btn-success" value="Gönder" />
+            </div>
+            <!--
+            <div class="form-group">
+
+                <input type="checkbox" asp-for="isRememberMe" /> Beni Hatırla
+            </div> 
+            -->
+        </form>
+
+        <!--
+        <div class="alert alert-primary">
+            <span class="text-primary" id="minutes"></span> dakika <span class="text-primary" id="seconds"></span>  kaldı
+        </div>
+        -->
+
+        <div class="alert alert-info">
+            <span>Email adresinize gelen kodu bu alana  giriniz.</span>
+        </div>
+    </div>
+</div>

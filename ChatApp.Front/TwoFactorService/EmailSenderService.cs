@@ -4,11 +4,11 @@ using SendGrid;
 
 namespace ChatApp.Front.TwoFactorService
 {
-    public class EmailSender
+    public class EmailSenderService
     {
         private readonly TwoFactorOptions _twoFactorOptions;
 
-        public EmailSender(IOptions<TwoFactorOptions> twoFactorOptions)
+        public EmailSenderService(IOptions<TwoFactorOptions> twoFactorOptions)
         {
             _twoFactorOptions = twoFactorOptions.Value;
         }
@@ -16,9 +16,9 @@ namespace ChatApp.Front.TwoFactorService
         {
             var apiKey = _twoFactorOptions.SendGrid_ApiKey;
             var client = new SendGridClient(apiKey);
-            var from = new EmailAddress("test@example.com");
+            var from = new EmailAddress("jedimaster610@gmail.com");
             var subject = "Two Factor Authentication";
-            var to = new EmailAddress("email");
+            var to = new EmailAddress(email);
             //var plainTextContent = "and easy to do anywhere, even with C#";
             var htmlContent = $"<h2>ChatApp Website Validation Code:</h2>{code}<h3></h3>";
             var msg = MailHelper.CreateSingleEmail(from, to, subject, null, htmlContent);

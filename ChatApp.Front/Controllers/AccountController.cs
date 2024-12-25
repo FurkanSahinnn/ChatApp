@@ -9,6 +9,8 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Options;
 using ChatApp.Front.TwoFactorService;
+using System.Reflection;
+using ChatApp.Front.Utils;
 
 namespace ChatApp.Front.Controllers
 {
@@ -16,39 +18,57 @@ namespace ChatApp.Front.Controllers
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IOptions<TwoFactorOptions> _twoFactorOptions;
+        private readonly EmailSenderService _emailSenderService;
 
-        public AccountController(IHttpClientFactory httpClientFactory, IOptions<TwoFactorOptions> twoFactorOptions)
+        public AccountController(IHttpClientFactory httpClientFactory, IOptions<TwoFactorOptions> twoFactorOptions, EmailSenderService emailSenderService)
         {
             _httpClientFactory = httpClientFactory;
             _twoFactorOptions = twoFactorOptions;
+            _emailSenderService = emailSenderService;
         }
-        public IActionResult TwoFactor()
-        {
+
+        public IActionResult TwoFactorRegister(RegisterModel model)
+        {   
+            if (_emailSenderService.TimeLeft(HttpContext) == 0)
+            {
+                return RedirectToAction("Login");
+            }
+            TempData.Put("registermodel", model);
+            // Mail gönderme işlemi burada yapılacak.
+            ViewBag.timeLeft = _emailSenderService.TimeLeft(HttpContext); // Kalan Zamanı al.
+            HttpContext.Session.SetString("codeVerification", _emailSenderService.Send(model.Email)); // Doğrulama kodunu gönder ve session'a kodu kaydet.
             // Formu görüntüler
-            return View();
+            return View(new TwoFactorRegisterViewModel
+            {
+                VerificationCode = string.Empty
+            });
         }
+        
 
         [HttpPost]
-        public async Task<IActionResult> TwoFactor(TwoFactorModel model)
+        public async Task<IActionResult> TwoFactorRegister(TwoFactorRegisterViewModel model)
         {
-            if (TempData["registerModel"] == null)
+
+            ViewBag.timeLeft = _emailSenderService.TimeLeft(HttpContext);
+            if (model.VerificationCode == HttpContext.Session.GetString("codeVerification"))
             {
-                // Eğer RegisterModel yoksa kullanıcıyı Register sayfasına geri yönlendir
-                return RedirectToAction("Register");
-            }
-            var registerModel = TempData["registerModel"];
+                HttpContext.Session.Remove("currentTime");
+                HttpContext.Session.Remove("codeVerification");
 
-            // code verification yap.
-            var client = _httpClientFactory.CreateClient();
-            var content = new StringContent(JsonSerializer.Serialize(registerModel), Encoding.UTF8, "application/json");
+                var registerModel = TempData.Get<RegisterModel>("registermodel");
 
-            // Web API'ye POST isteği gönder
-            var response = await client.PostAsync("http://localhost:5221/api/auth/register", content);
+                // code verification yap.
+                var client = _httpClientFactory.CreateClient();
+                var content = new StringContent(JsonSerializer.Serialize(registerModel), Encoding.UTF8, "application/json");
 
-            if (response.IsSuccessStatusCode)
-            {
-                // Başarılı kayıt sonrası giriş sayfasına yönlendir
-                return RedirectToAction("Login", "Account");
+                // Web API'ye POST isteği gönder
+                var response = await client.PostAsync("http://localhost:5221/api/auth/register", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Başarılı kayıt sonrası giriş sayfasına yönlendir
+                    return RedirectToAction("Login", "Account");
+                }
             }
             else
             {
@@ -56,7 +76,7 @@ namespace ChatApp.Front.Controllers
                 ModelState.AddModelError("", "An error occurred while registering the user.");
                 return View(model);
             }
-
+            return View(model);
         }
 
         public IActionResult Register()
@@ -66,30 +86,15 @@ namespace ChatApp.Front.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterModel model)
         {
-            if (!ModelState.IsValid)
+            // Test123456
+            
+            if (ModelState.IsValid)
             {
-                return View(model); // Model hataları varsa tekrar formu göster
+                HttpContext.Session.Remove("currentTime");
+                return RedirectToAction("TwoFactorRegister", model); 
             }
-            //TempData["registerModel"] = model;
-            // code verification yap.
-            var client = _httpClientFactory.CreateClient();
-            var content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
-
-            // Web API'ye POST isteği gönder
-            var response = await client.PostAsync("http://localhost:5221/api/auth/register", content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                // Başarılı kayıt sonrası giriş sayfasına yönlendir
-                return RedirectToAction("Login", "Account");
-            }
-            else
-            {
-                // Hata mesajını ekrana yazdır
-                ModelState.AddModelError("", "An error occurred while registering the user.");
-                return View(model);
-            }
-            //return RedirectToAction("TwoFactor");
+            
+            return View(model);
         }
 
         public IActionResult Login()

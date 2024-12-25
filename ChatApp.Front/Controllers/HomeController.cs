@@ -1,4 +1,5 @@
 ﻿using ChatApp.Front.Models;
+using ChatApp.Front.TwoFactorService;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ namespace ChatApp.Front.Controllers
     public class HomeController : Controller
     {
         private readonly string _claimUrl = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/";
+        
         public IActionResult Index()
         {
             // User = ClaimPrincipal

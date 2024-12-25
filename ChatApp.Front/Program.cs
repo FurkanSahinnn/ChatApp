@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 // DI Container
-builder.Services.Configure<TwoFactorOptions>(builder.Configuration.GetSection("TwoFactorOptions"));
+builder.Services.Configure<TwoFactorOptions>(builder.Configuration.GetSection("TwoFactorOptions")); // Options Pattern for TwoFactorOptions class
+builder.Services.AddScoped<EmailSenderService>();
+
 builder.Services.AddHttpClient(); // IHttpClientFactory servisi eklendi
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddCookie(
     JwtBearerDefaults.AuthenticationScheme, options => {
@@ -16,6 +18,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddCo
         options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;  // Gelen request'i Cookie'nin policy'si ile esler. (Http - http veya https - https)
         options.Cookie.Name = "JWTCookie";
     });
+
+// Session Middleware
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -39,7 +43,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllerRoute(
         name: "default",
         pattern: "{Controller}/{Action}/{id?}", // {id:int}
-        defaults: new {Controller = "Account", Action = "Login"}
+        defaults: new {Controller = "Account", Action = "Register"}
         );
     //endpoints.MapDefaultControllerRoute();
 });
