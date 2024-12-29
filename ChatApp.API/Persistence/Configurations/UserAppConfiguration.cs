@@ -8,6 +8,15 @@ namespace ChatApp.API.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<UserApp> builder)
         {
+            builder.HasOne(u => u.Role)
+               .WithMany(r => r.Users)
+               .HasForeignKey(u => u.RoleId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            // Varsayılan kullanıcı örneği
+            builder.HasData(
+                new UserApp { Id = 1, Name = "Default Admin", Email = "admin@default.com", Password = "password", RoleId = 1 }
+            );
             //builder.HasOne(x => x.RoleApp).WithMany(x => x.UserApp).HasForeignKey(x => x.RoleAppId);
         }
     }

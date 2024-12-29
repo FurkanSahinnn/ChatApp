@@ -3,6 +3,7 @@ using ChatApp.API.Core.Application.Dtos;
 using ChatApp.API.Core.Application.Features.CQRS.Queries;
 using ChatApp.API.Core.Application.Interfaces;
 using ChatApp.API.Core.Domain;
+using ChatApp.API.Core.Entities;
 using MediatR;
 
 namespace ChatApp.API.Core.Application.Features.CQRS.Handlers
@@ -10,41 +11,46 @@ namespace ChatApp.API.Core.Application.Features.CQRS.Handlers
     public class LoginUserRequestHandler : IRequestHandler<LoginUserQueryForRequest, LoginUserResponseDto>
     {
         private readonly IGenericRepository<UserApp> _repositoryUserApp;
-        //private readonly IGenericRepository<RoleApp> _repositoryRoleApp;
+        private readonly IGenericRepository<RoleApp> _repositoryRoleApp;
 
-        public LoginUserRequestHandler(IGenericRepository<UserApp> repositoryUserApp)
+        public LoginUserRequestHandler(IGenericRepository<UserApp> userRepository, IGenericRepository<RoleApp> roleRepository)
         {
-            _repositoryUserApp = repositoryUserApp;
-            //_repositoryRoleApp = repositoryRoleApp;
+            _repositoryUserApp = userRepository;
+            _repositoryRoleApp = roleRepository;
         }
         public async Task<LoginUserResponseDto> Handle(LoginUserQueryForRequest request, CancellationToken cancellationToken)
         {
             var userAppResponseDto = new LoginUserResponseDto();
+
+            // Kullanıcıyı email üzerinden kontrol et
             var user = await _repositoryUserApp.WhereAsync(x => x.Email == request.Email);
-            
-            //var user = await _repositoryUserApp.WhereAsync(x => x.Email == request.Email && x.Password == request.Password);
+
             if (user == null)
             {
-                userAppResponseDto.IsUserAvailable = false;
-            } else
+                userAppResponseDto.IsUserAvailable = false; // Kullanıcı bulunamadı
+            }
+            else
             {
+                // Şifre doğrulaması
                 var isPasswordValid = PasswordHasher.Verify(request.Password, user.Password);
                 if (isPasswordValid)
                 {
+                    // Kullanıcının rolünü RoleApp tablosundan al
+                    var role = await _repositoryRoleApp.GetByIdAsync(user.RoleId);
+
                     userAppResponseDto.Id = user.Id;
                     userAppResponseDto.UserName = user.Name;
                     userAppResponseDto.Email = user.Email;
-                    userAppResponseDto.Role = user.Role;
-                    //var roleName = await _repositoryRoleApp.WhereAsync(x => x.Id == user.RoleAppId);
-                    //userAppResponseDto.Role = roleName?.RoleName;
+                    userAppResponseDto.Role = role?.Name ?? "Unknown"; // Rol bilgisi yoksa "Unknown"
 
-                    userAppResponseDto.IsUserAvailable = true;
-                } else
-                {
-                    userAppResponseDto.IsUserAvailable = false;
+                    userAppResponseDto.IsUserAvailable = true; // Kullanıcı geçerli
                 }
-
+                else
+                {
+                    userAppResponseDto.IsUserAvailable = false; // Şifre hatalı
+                }
             }
+
             return userAppResponseDto;
         }
     }

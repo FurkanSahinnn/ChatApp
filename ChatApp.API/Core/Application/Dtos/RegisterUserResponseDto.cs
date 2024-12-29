@@ -3,5 +3,6 @@
     public class RegisterUserResponseDto
     {
         public bool IsExist { get; set; }
+        // public string? Role { get; set; } // Varsayılan olarak Member
     }
 }

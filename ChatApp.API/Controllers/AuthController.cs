@@ -30,7 +30,7 @@ namespace ChatApp.API.Controllers
 
             if (dto.IsExist)
             {
-                return BadRequest("Username or Password is already used.");
+                return BadRequest("Username or Email is already used.");
             }
             
             return Created("", request);
@@ -46,7 +46,6 @@ namespace ChatApp.API.Controllers
                 return Created("", createdToken);
             }
             return Unauthorized("Invalid Authentication.");
-            
         }
     }
 }
