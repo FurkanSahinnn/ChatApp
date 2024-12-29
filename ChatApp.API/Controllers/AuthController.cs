@@ -2,6 +2,7 @@
 using ChatApp.API.Core.Application.Options;
 using ChatApp.API.JwtFeatures;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;

@@ -32,7 +32,7 @@ namespace ChatApp.API.JwtFeatures
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Value.SecurityKey!));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
+            
             var tokenExpire = DateTime.UtcNow.AddMinutes(options.Value.AccessTokenExpiration);
 
             JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(
@@ -42,7 +42,7 @@ namespace ChatApp.API.JwtFeatures
                 notBefore: DateTime.UtcNow,
                 expires: tokenExpire,
                 signingCredentials: credentials);
-
+            
             JwtSecurityTokenHandler jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             var token = jwtSecurityTokenHandler.WriteToken(jwtSecurityToken);
 

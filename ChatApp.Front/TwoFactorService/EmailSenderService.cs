@@ -28,7 +28,7 @@ namespace ChatApp.Front.TwoFactorService
         public int GetRandomCode()
         {
             Random random = new Random();
-            return random.Next(1000, 9999);
+            return random.Next(10000, 99999); // 5 haneli random kod üretir.
         }
         public string Send(string emailAddress)
         {

@@ -4,12 +4,16 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
-    <link rel="stylesheet" href="~/context/css/bootstrap.min.css" />
+    <!-- Ortak css'ler için -->
+    <link rel="stylesheet" href="~/context/css/bootstrap.min.css" /> <!-- Bootstrap eklemek için-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <!-- Sayfa bazlı CSS dosyalarını eklemek için -->
+    @RenderSection("Styles", required: false)
 </head>
 <body>
     <div>
         @RenderBody()
     </div>
-    <style src="~/context/js/bootstrap.bundle.min.js"></style>
+    <script src="~/context/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -3,6 +3,8 @@ using ChatApp.Front.TwoFactorService;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace ChatApp.Front.Controllers
 {
@@ -10,24 +12,32 @@ namespace ChatApp.Front.Controllers
     public class HomeController : Controller
     {
         private readonly string _claimUrl = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/";
-        
-        public IActionResult Index()
-        {
-            // User = ClaimPrincipal
-            // Kullanıcının oturum bilgilerinden (ClaimsPrincipal) username ve email’i alıyoruz
-            var username = User.Claims.FirstOrDefault(c => c.Type == _claimUrl + "name")?.Value;
-            var email = User.Claims.FirstOrDefault(c => c.Type == _claimUrl + "emailaddress")?.Value;
-
-            // ViewData veya ViewBag kullanarak bilgileri Index.cshtml’e aktarabiliriz
-            ViewData["Username"] = username ?? "Username not found";
-            ViewData["Email"] = email ?? "Email not found";
-
-            return View();
-        }
         // member123456@gmail.com
         // Member123456
         public IActionResult HomePage()
         {
+            // Cookie'deki token'ı al
+            if (Request.Cookies.TryGetValue("JWTToken", out var token))
+            {
+                var handler = new JwtSecurityTokenHandler();
+
+                if (handler.CanReadToken(token))
+                {
+                    var jwtToken = handler.ReadJwtToken(token);
+                    var claims = jwtToken.Claims;
+
+                    // Örnek: Kullanıcı adı ve email al
+                    var username = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+                    var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+                    ViewData["Username"] = username ?? "Username not found";
+                    ViewData["Email"] = email ?? "Email not found";
+
+                    return View();
+                }
+            }
+
+            return Unauthorized();
+            /*
             // User = ClaimPrincipal
             // Kullanıcının oturum bilgilerinden (ClaimsPrincipal) username ve email’i alıyoruz
             var username = User.Claims.FirstOrDefault(c => c.Type == _claimUrl + "name")?.Value;
@@ -38,6 +48,7 @@ namespace ChatApp.Front.Controllers
             ViewData["Email"] = email ?? "Email not found";
 
             return View();
+            */
         }
 
         [Authorize]

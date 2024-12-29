@@ -20,7 +20,12 @@ services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.Configure<CustomTokenOptions>(builder.Configuration.GetSection("TokenOptions"));
 
 services.AddMediatR(Assembly.GetExecutingAssembly());
-services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(option =>
+services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(option =>
 {
     var tokenOptions = builder.Configuration.GetSection("TokenOptions").Get<CustomTokenOptions>();
     option.RequireHttpsMetadata = false;

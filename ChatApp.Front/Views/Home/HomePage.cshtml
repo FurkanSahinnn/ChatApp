@@ -2,6 +2,12 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    Layout = "_Layout";
+}
+@section Styles {
+    <!--
+    <link rel="stylesheet" href="/css/authentication.css?v=@DateTime.Now.Ticks" />
+    -->
 }
 
 <!DOCTYPE html>
@@ -10,19 +16,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    
 </head>
 <body>
-    <h1>Welcome to the Home Page</h1>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-auto bg-light sticky-top">
+                <div class="d-flex flex-sm-column flex-row flex-nowrap bg-light align-items-center sticky-top">
+                    <a href="/" class="d-block p-3 link-dark text-decoration-none" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Icon-only">
+                        <i class="bi-bootstrap fs-1"></i>
+                    </a>
+                    <ul class="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Home">
+                                <i class="bi-house fs-1"></i>
+                            </a>
+                        </li>
+                        
+                        <li>
+                            <a href="#" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Products">
+                                <i class="bi-heart fs-1"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Customers">
+                                <i class="bi-people fs-1"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center justify-content-center p-3 link-dark text-decoration-none dropdown-toggle" id="dropdownUser3" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi-person-circle h2"></i>
+                        </a>
+                        <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser3">
+                            <li><a class="dropdown-item" href="#">New Chat</a></li>
+                            <li><a class="dropdown-item" href="#">Settings</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("RedirectToProfile", "Home")">Profile</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm p-3 min-vh-100">
+                <!-- Main Content -->
 
-    <p><strong>Username:</strong> @ViewData["Username"]</p>
-    <p><strong>Email:</strong> @ViewData["Email"]</p>
 
 
-    <!-- Profil düğmesi -->
-    <button 
-        onclick="location.href='@Url.Action("RedirectToProfile", "Home")'"
-        class="profile-button">
-        <img src="/images/default-profile.png" alt="Profile" style="border-radius:50%; width:50px; height:50px;">
-    </button>
+                <!--
+                <div class="container-fluid p-5">
+                    <h1>Welcome to Chat Application</h1>
+                    
+                    <button onclick="location.href='@Url.Action("RedirectToProfile", "Home")'"
+                            class="btn btn-primary d-flex align-items-center">
+                        <img src="/images/default-profile.png" alt="Profile" style="border-radius:50%; width:50px; height:50px;">
+                        <span class="ms-2">Profile</span>
+                    </button>
+                </div>
+                -->
+            </div>
+        </div>
+    </div>
 </body>
 </html>

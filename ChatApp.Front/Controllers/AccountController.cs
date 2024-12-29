@@ -19,7 +19,8 @@ namespace ChatApp.Front.Controllers
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IOptions<TwoFactorOptions> _twoFactorOptions;
         private readonly EmailSenderService _emailSenderService;
-
+        // TempData: Same action to action data transfering. 
+        // RedirectToAction(): Different action to action data transferring
         public AccountController(IHttpClientFactory httpClientFactory, IOptions<TwoFactorOptions> twoFactorOptions, EmailSenderService emailSenderService)
         {
             _httpClientFactory = httpClientFactory;
@@ -33,7 +34,9 @@ namespace ChatApp.Front.Controllers
             {
                 return RedirectToAction("Login");
             }
-            TempData.Put("registermodel", model);
+
+            TempData.Put("registermodel", model); 
+
             // Mail gönderme işlemi burada yapılacak.
             ViewBag.timeLeft = _emailSenderService.TimeLeft(HttpContext); // Kalan Zamanı al.
             HttpContext.Session.SetString("codeVerification", _emailSenderService.Send(model.Email)); // Doğrulama kodunu gönder ve session'a kodu kaydet.
@@ -48,9 +51,8 @@ namespace ChatApp.Front.Controllers
         [HttpPost]
         public async Task<IActionResult> TwoFactorRegister(TwoFactorRegisterViewModel model)
         {
-
             ViewBag.timeLeft = _emailSenderService.TimeLeft(HttpContext);
-            if (model.VerificationCode == HttpContext.Session.GetString("codeVerification"))
+            if (model.VerificationCode == HttpContext.Session.GetString("codeVerification") && StringOperations.IsDigitsOnly(model.VerificationCode))
             {
                 HttpContext.Session.Remove("currentTime");
                 HttpContext.Session.Remove("codeVerification");
@@ -67,6 +69,7 @@ namespace ChatApp.Front.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     // Başarılı kayıt sonrası giriş sayfasına yönlendir
+                    ViewData["IsSuccess"] = true;
                     return RedirectToAction("Login", "Account");
                 }
             }
@@ -74,6 +77,7 @@ namespace ChatApp.Front.Controllers
             {
                 // Hata mesajını ekrana yazdır
                 ModelState.AddModelError("", "An error occurred while registering the user.");
+                ViewData["IsSuccess"] = false;
                 return View(model);
             }
             return View(model);
@@ -83,6 +87,7 @@ namespace ChatApp.Front.Controllers
         {
             return View(new RegisterModel());
         }
+
         [HttpPost]
         public async Task<IActionResult> Register(RegisterModel model)
         {
@@ -91,9 +96,10 @@ namespace ChatApp.Front.Controllers
             if (ModelState.IsValid)
             {
                 HttpContext.Session.Remove("currentTime");
+                ViewData["IsSuccess"] = true;
                 return RedirectToAction("TwoFactorRegister", model); 
             }
-            
+            ViewData["IsSuccess"] = false;
             return View(model);
         }
 
@@ -119,7 +125,7 @@ namespace ChatApp.Front.Controllers
                 // API üzerinden kullanıcının doğruluğunu kontrol edip JWT token döndürüp,
                 // sonucu alıyoruz.
                 var response = await client.PostAsync("http://localhost:5221/api/Auth/Login", content);
-
+                
                 // HTTP yanıt kodunun 200 (OK) serisinde olup olmadığını kontrol et.
                 Console.WriteLine(response.IsSuccessStatusCode);
                 if (response.IsSuccessStatusCode)
@@ -162,15 +168,26 @@ namespace ChatApp.Front.Controllers
                             claimsPrincipal,
                             props);
 
-                        
+                        // JWT token'i cookie'ye kaydet
+                        Response.Cookies.Append("JWTToken", tokenModel.Token, new CookieOptions
+                        {
+                            HttpOnly = true,
+                            Secure = true,
+                            SameSite = SameSiteMode.Strict,
+                            Expires = tokenModel.TokenExpiration
+                        });
+
                         // Kullanıcıyı HomeController içindeki Index action metoduna yönlendir
+                        ViewData["IsSuccess"] = true;
                         return RedirectToAction("HomePage", "Home"); 
                     }
                 } else
                 {
                     ModelState.AddModelError("", "Email or Password incorrect.");
+                    ViewData["IsSuccess"] = false;
                 }
                 return View(model);
+                    
             }
             return View(model);
         } 
