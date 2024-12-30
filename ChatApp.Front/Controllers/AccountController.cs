@@ -142,7 +142,6 @@ namespace ChatApp.Front.Controllers
                         // API'den gelen JWT token'ını oku ve içindeki claims bilgilerini al.
                         JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
                         var token = handler.ReadJwtToken(tokenModel.Token);
-
                         // JWT token'ın içinde bulunan claims'leri (Id, Email, Role gibi) bir listeye dönüştürür ve
                         // Bu claims'ler içinde username, email gibi bilgileri oturumda sakla.
                         var claims = token.Claims.ToList();
@@ -168,6 +167,7 @@ namespace ChatApp.Front.Controllers
                             claimsPrincipal,
                             props);
 
+                        
                         // JWT token'i cookie'ye kaydet
                         Response.Cookies.Append("JWTToken", tokenModel.Token, new CookieOptions
                         {
@@ -176,10 +176,30 @@ namespace ChatApp.Front.Controllers
                             SameSite = SameSiteMode.Strict,
                             Expires = tokenModel.TokenExpiration
                         });
-
-                        // Kullanıcıyı HomeController içindeki Index action metoduna yönlendir
-                        ViewData["IsSuccess"] = true;
-                        return RedirectToAction("HomePage", "Home"); 
+                        
+                        
+                        // Kullanıcı adı ve email al
+                        var username = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+                        var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+                        var role = RoleParser.ParseStringToText(claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value); // 1 -> "admin", 2 -> "member"
+                        if (role == "Member")
+                        {
+                            // Kullanıcıyı HomeController içindeki Index action metoduna yönlendir
+                            ViewData["IsSuccess"] = true;
+                            return RedirectToAction("HomePage", "Home");
+                        } else if (role == "Admin")
+                        {
+                            ViewData["IsSuccess"] = true;
+                            return RedirectToAction("HomePage", "Admin");
+                        } else
+                        {
+                            ModelState.AddModelError("", "Unauthorized.");
+                            ViewData["IsSuccess"] = false;
+                        }
+                    } else
+                    {
+                        ModelState.AddModelError("", "Invalid Token.");
+                        ViewData["IsSuccess"] = false;
                     }
                 } else
                 {

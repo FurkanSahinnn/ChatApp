@@ -52,14 +52,14 @@ namespace ChatApp.API.Persistence.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { 1, "admin" },
-                    { 2, "member" }
+                    { 1, "Admin" },
+                    { 2, "Member" }
                 });
 
             migrationBuilder.InsertData(
                 table: "UserApps",
                 columns: new[] { "Id", "Email", "Name", "Password", "RoleId" },
-                values: new object[] { 1, "admin@default.com", "Default Admin", "password", 1 });
+                values: new object[] { 1, "admin@default.com", "Default Admin", "$2a$11$KBAvEBqswm7M7jjKElhGJOVhA/vk43LNVihTGMVMtVqxZ7R3xj53e", 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserApps_RoleId",

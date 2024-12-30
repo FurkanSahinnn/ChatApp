@@ -2,6 +2,7 @@ using ChatApp.API.Core.Application.Interfaces;
 using ChatApp.API.Core.Application.Options;
 using ChatApp.API.Persistence.Context;
 using ChatApp.API.Persistence.Repositories;
+using ChatApp.API.Persistence.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
 using System.Reflection;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
 // Add services to the container.
+services.AddScoped<IUserService, UserService>();
 services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.Configure<CustomTokenOptions>(builder.Configuration.GetSection("TokenOptions"));
 
@@ -38,6 +41,7 @@ services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenOptions.SecurityKey)),
         ValidateIssuerSigningKey = true,
         ValidateLifetime = true,
+        RoleClaimType = ClaimTypes.Role // Role claim'ini kontrol et
     };
 
 });

@@ -1,4 +1,5 @@
-﻿using ChatApp.API.Core.Domain;
+﻿using ChatApp.API.Core.Application.Constants;
+using ChatApp.API.Core.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,7 +16,7 @@ namespace ChatApp.API.Persistence.Configurations
 
             // Varsayılan kullanıcı örneği
             builder.HasData(
-                new UserApp { Id = 1, Name = "Default Admin", Email = "admin@default.com", Password = "password", RoleId = 1 }
+                new UserApp { Id = 1, Name = "Default Admin", Email = "admin@default.com", Password = PasswordHasher.Hash("password"), RoleId = 1 }
             );
             //builder.HasOne(x => x.RoleApp).WithMany(x => x.UserApp).HasForeignKey(x => x.RoleAppId);
         }

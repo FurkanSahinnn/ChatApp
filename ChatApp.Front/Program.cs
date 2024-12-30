@@ -1,3 +1,5 @@
+using ChatApp.Front.Interfaces;
+using ChatApp.Front.Services;
 using ChatApp.Front.TwoFactorService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -8,7 +10,7 @@ builder.Services.AddControllersWithViews();
 // DI Container
 builder.Services.Configure<TwoFactorOptions>(builder.Configuration.GetSection("TwoFactorOptions")); // Options Pattern for TwoFactorOptions class
 builder.Services.AddScoped<EmailSenderService>();
-
+builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddHttpClient(); // IHttpClientFactory servisi eklendi
 
 var jwtSettings = builder.Configuration.GetSection("TokenOptions");

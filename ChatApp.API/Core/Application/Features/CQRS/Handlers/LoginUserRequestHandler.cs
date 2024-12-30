@@ -41,7 +41,7 @@ namespace ChatApp.API.Core.Application.Features.CQRS.Handlers
                     userAppResponseDto.Id = user.Id;
                     userAppResponseDto.UserName = user.Name;
                     userAppResponseDto.Email = user.Email;
-                    userAppResponseDto.Role = role?.Name ?? "Unknown"; // Rol bilgisi yoksa "Unknown"
+                    userAppResponseDto.Role = role.Name ?? "Unknown"; // Rol bilgisi yoksa "Unknown"
 
                     userAppResponseDto.IsUserAvailable = true; // Kullanıcı geçerli
                 }

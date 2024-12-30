@@ -13,8 +13,8 @@ namespace ChatApp.API.Persistence.Configurations
 
             // Varsayılan rollerin oluşturulması
             builder.HasData(
-                new RoleApp { Id = 1, Name = "admin" },
-                new RoleApp { Id = 2, Name = "member" }
+                new RoleApp { Id = 1, Name = "Admin" },
+                new RoleApp { Id = 2, Name = "Member" }
             );
         }
     }
