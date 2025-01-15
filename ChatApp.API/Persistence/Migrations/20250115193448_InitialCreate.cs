@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -12,6 +13,22 @@ namespace ChatApp.API.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Chats",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    ToUserId = table.Column<int>(type: "int", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Chats", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "RoleApps",
                 columns: table => new
@@ -59,7 +76,7 @@ namespace ChatApp.API.Persistence.Migrations
             migrationBuilder.InsertData(
                 table: "UserApps",
                 columns: new[] { "Id", "Email", "Name", "Password", "RoleId" },
-                values: new object[] { 1, "admin@default.com", "Default Admin", "$2a$11$KBAvEBqswm7M7jjKElhGJOVhA/vk43LNVihTGMVMtVqxZ7R3xj53e", 1 });
+                values: new object[] { 1, "admin@default.com", "Default Admin", "$2a$11$umPchn0Ep7kTpyja/w0jNuSYjgIBp.nyL3UNUkQoYCdvJu2YBsnBy", 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserApps_RoleId",
@@ -70,6 +87,9 @@ namespace ChatApp.API.Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Chats");
+
             migrationBuilder.DropTable(
                 name: "UserApps");
 

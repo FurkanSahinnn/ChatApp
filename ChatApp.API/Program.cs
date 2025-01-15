@@ -1,5 +1,6 @@
 using ChatApp.API.Core.Application.Interfaces;
 using ChatApp.API.Core.Application.Options;
+using ChatApp.API.Core.Hubs;
 using ChatApp.API.Persistence.Context;
 using ChatApp.API.Persistence.Repositories;
 using ChatApp.API.Persistence.Services;
@@ -51,6 +52,20 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyHeader()
+              .AllowAnyMethod()
+              .SetIsOriginAllowed(origin => true)
+              .AllowCredentials()
+              .WithOrigins("http://localhost:5221", "https://localhost:7041", "https://localhost:7130");
+    });
+});
 // Add DbContext
 services.AddDbContext<AuthenticationContext>(options =>
 {
@@ -69,10 +84,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/chathub");
+
+
 
 app.Run();

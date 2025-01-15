@@ -8,7 +8,7 @@ namespace ChatApp.Front.Services
     {
         private readonly HttpClient _httpClient;
 
-        private readonly string BASE_URL = "http://localhost:5221/api/admin";
+        //private readonly string BASE_URL = "http://localhost:5221/api/admin";
 
         public AdminService(IHttpClientFactory httpClientFactory)
         {

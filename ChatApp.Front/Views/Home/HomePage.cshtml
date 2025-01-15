@@ -5,9 +5,7 @@
     Layout = "_Layout";
 }
 @section Styles {
-    <!--
-    <link rel="stylesheet" href="/css/authentication.css?v=@DateTime.Now.Ticks" />
-    -->
+    <link rel="stylesheet" href="/css/chat.css?v=@DateTime.Now.Ticks" />
 }
 
 <!DOCTYPE html>
@@ -15,65 +13,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    
+    <title>Chat Application</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.10/signalr.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-auto bg-light sticky-top">
-                <div class="d-flex flex-sm-column flex-row flex-nowrap bg-light align-items-center sticky-top">
-                    <a href="/" class="d-block p-3 link-dark text-decoration-none" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Icon-only">
-                        <i class="bi-bootstrap fs-1"></i>
-                    </a>
-                    <ul class="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Home">
-                                <i class="bi-house fs-1"></i>
-                            </a>
-                        </li>
-                        
-                        <li>
-                            <a href="#" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Products">
-                                <i class="bi-heart fs-1"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Customers">
-                                <i class="bi-people fs-1"></i>
-                            </a>
-                        </li>
-                    </ul>
-                    <div class="dropdown">
-                        <a href="#" class="d-flex align-items-center justify-content-center p-3 link-dark text-decoration-none dropdown-toggle" id="dropdownUser3" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi-person-circle h2"></i>
-                        </a>
-                        <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser3">
-                            <li><a class="dropdown-item" href="#">New Chat</a></li>
-                            <li><a class="dropdown-item" href="#">Settings</a></li>
-                            <li><a class="dropdown-item" href="@Url.Action("RedirectToProfile", "Home")">Profile</a></li>
-                        </ul>
-                    </div>
-                </div>
+    <div class="chat-container">
+        <!-- User List (Sidebar) -->
+        <div class="user-list">
+            <ul id="userList">
+                <!-- Users will be dynamically loaded here -->
+            </ul>
+            <button id="profileButton" class="btn btn-primary mt-3">Profile</button>
+            <div id="userData" data-user-id="@ViewData["UserId"]">
+                <p>Kullanıcı ID: @ViewData["UserId"]</p>
             </div>
-            <div class="col-sm p-3 min-vh-100">
-                <!-- Main Content -->
+        </div>
 
-
-
-                <!--
-                <div class="container-fluid p-5">
-                    <h1>Welcome to Chat Application</h1>
-                    
-                    <button onclick="location.href='@Url.Action("RedirectToProfile", "Home")'"
-                            class="btn btn-primary d-flex align-items-center">
-                        <img src="/images/default-profile.png" alt="Profile" style="border-radius:50%; width:50px; height:50px;">
-                        <span class="ms-2">Profile</span>
-                    </button>
-                </div>
-                -->
+        <!-- Chat Area -->
+        <div class="chat-area">
+            <div id="chatWindow" class="messages">
+                <!-- Messages will be dynamically loaded here -->
+            </div>
+            <div class="chat-input">
+                <textarea id="messageInput" placeholder="Enter your message..."></textarea>
+                <button id="sendButton" type="button">Send</button>
             </div>
         </div>
     </div>
+
+    <script>
+        // SignalR bağlantısını başlat
+        const connection = new signalR.HubConnectionBuilder().withUrl("http://localhost:5221/chathub").build();
+
+        document.getElementById("sendButton").disabled = true;
+        const currentUserId = document.getElementById('userData').getAttribute('data-user-id');
+        console.log("Current User ID:", currentUserId);
+        // SignalR ile gelen mesajları dinle
+        connection.start()
+                .then(() => {
+                    document.getElementById("sendButton").disabled = false;
+                    // Kullanıcı ID'si ile bağlan
+                    connection.invoke("Connect", parseInt(currentUserId)).catch(err => console.error("Failed to connect:", err));
+
+                    connection.on("Users", function (user) {
+                        const userId = user.id;
+                        const userName = user.name;
+                        const userEmail = user.email;
+                    });
+
+                    connection.on("Messages", function (chat) {
+                        const chatWindow = document.getElementById("chatWindow");
+                        const msgClass = chat.userId === parseInt(currentUserId) ? 'sent' : 'received';
+                        const msgElement = `<div class='message ${msgClass}'><p>${chat.message}</p><span>${new Date(chat.date).toLocaleTimeString()}</span></div>`;
+                        chatWindow.insertAdjacentHTML('beforeend', msgElement);
+                        chatWindow.scrollTop = chatWindow.scrollHeight;
+                    });
+                    
+                    console.log("SignalR connected")
+                })
+                .catch(err => console.error("SignalR connection error:", err));
+
+        
+        
+
+        // Kullanıcı listesini yükle
+        function loadUsers() {
+            console.log("Loading users...");
+            $.get(`http://localhost:5221/api/Chats/GetUsers?currentUserId=${currentUserId}`, function(users) {
+                const userList = $("#userList");
+                userList.empty();
+                users.forEach(user => {
+                    userList.append(`<li class='user-item' data-id='${user.id}'>${user.name}</li>`);
+                });
+            }).fail(function() {
+                console.error("Failed to load users.");
+            });
+        }
+
+        loadUsers();
+
+        // Mesajları yükle
+        function loadMessages(userId, toUserId) {
+            console.log("Loading messages...");
+            $.get(`http://localhost:5221/api/Chats/GetChats?UserId=${userId}&ToUserId=${toUserId}`, function(messages) {
+                const chatWindow = $("#chatWindow");
+                chatWindow.empty();
+                messages.forEach(msg => {
+                    const msgClass = msg.userId === parseInt(userId) ? 'sent' : 'received';
+                    chatWindow.append(`<div class='message ${msgClass}'><p>${msg.message}</p><span>${new Date(msg.date).toLocaleTimeString()}</span></div>`);
+                });
+                chatWindow.scrollTop(chatWindow.prop("scrollHeight"));
+            }).fail(function() {
+                console.error("Failed to load messages.");
+            });
+        }
+
+        // Mesaj gönderme
+        $("#sendButton").on("click", function () {
+            const message = $("#messageInput").val();
+            const toUserId = $(".user-item.active").data("id");
+            const userId = currentUserId;
+
+            if (!toUserId || !message.trim()) {
+                alert("Please select a user and write a message.");
+            return;
+            }
+
+            $.ajax({
+                url: "http://localhost:5221/api/Chats/SendMessage",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    UserId: userId,
+                    ToUserId: toUserId,
+                    Message: message
+                }),
+                success: function () {
+                    $("#chatWindow").append(`<div class='message sent'><p>${message}</p><span>${new Date().toLocaleTimeString()}</span></div>`);
+                    $("#messageInput").val("");
+                    $("#chatWindow").scrollTop($("#chatWindow").prop("scrollHeight"));
+                },
+                error: function (err) {
+                    console.error("Failed to send message:", err);
+                }
+            });
+        });
+
+        // Kullanıcı tıklandığında mesajları yükle
+        $(document).on("click", ".user-item", function () {
+            const toUserId = $(this).data("id");
+            const userId = currentUserId;
+
+            console.log(`Loading chat with User ID: ${toUserId}`);
+            $(".user-item").removeClass("active");
+            $(this).addClass("active");
+
+            loadMessages(userId, toUserId);
+        });
+
+        // Profil butonu
+        $("#profileButton").on("click", function () {
+            window.location.href = "@Url.Action("RedirectToProfile", "Home")";
+        });
+    </script>
 </body>
 </html>

@@ -14,6 +14,7 @@ namespace ChatApp.API.Persistence.Context
         public DbSet<UserApp> UserApps => Set<UserApp>();
         //public DbSet<RoleApp> RoleApps { get { return this.Set<RoleApp>(); } }
         public DbSet<RoleApp> RoleApps => Set<RoleApp>();
+        public DbSet<Chat> Chats => Set<Chat>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
