@@ -24,25 +24,7 @@ namespace ChatApp.API.Controllers
                 .ToListAsync(cancellationToken);
             return Ok(chats);
         }
-        /*
-        [HttpGet]
-        public async Task<IActionResult> SendMessage(SendMessageDto request, CancellationToken cancellationToken)
-        {
-            Chat chat = new()
-            {
-                UserId = request.UserId,
-                ToUserId = request.ToUserId,
-                Message = request.Message,
-                Date = DateTime.UtcNow
-            };
-            await context.AddAsync(chat, cancellationToken);
-            await context.SaveChangesAsync(cancellationToken);
-            string connectionId = ChatHub.Users.First(p => p.Value == chat.ToUserId).Key;
 
-            await hubContext.Clients.Client(connectionId).SendAsync("Messages", chat);
-            return Ok();
-        }
-        */
         [HttpPost]
         public async Task<IActionResult> SendMessage(SendMessageDto request, CancellationToken cancellationToken)
         {
@@ -56,7 +38,7 @@ namespace ChatApp.API.Controllers
             await context.AddAsync(chat, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             
-            string connectionId = ChatHub.Users.First(p => p.Value == chat.ToUserId).Key;
+            string connectionId = ChatHub.Users.FirstOrDefault(p => p.Value == chat.ToUserId).Key;
             
             if (!string.IsNullOrEmpty(connectionId))
             {

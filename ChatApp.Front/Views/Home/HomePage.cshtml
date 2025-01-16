@@ -16,13 +16,38 @@
     <title>Chat Application</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.10/signalr.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        .message {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            max-width: 80%;
+        }
+        .sent {
+            background-color: #dcf8c6;
+            text-align: right;
+            margin-left: auto;
+        }
+        .received {
+            background-color: #fff;
+            text-align: left;
+            margin-right: auto;
+        }
+        .message p {
+            margin: 0;
+        }
+        .message span {
+            font-size: 0.8rem;
+            color: #888;
+        }
+    </style>
+
 </head>
 <body>
     <div class="chat-container">
-        <!-- User List (Sidebar) -->
         <div class="user-list">
             <ul id="userList">
-                <!-- Users will be dynamically loaded here -->
+                <!-- ... -->
             </ul>
             <button id="profileButton" class="btn btn-primary mt-3">Profile</button>
             <div id="userData" data-user-id="@ViewData["UserId"]">
@@ -30,10 +55,8 @@
             </div>
         </div>
 
-        <!-- Chat Area -->
         <div class="chat-area">
             <div id="chatWindow" class="messages">
-                <!-- Messages will be dynamically loaded here -->
             </div>
             <div class="chat-input">
                 <textarea id="messageInput" placeholder="Enter your message..."></textarea>
@@ -45,27 +68,27 @@
     <script>
         // SignalR bağlantısını başlat
         const connection = new signalR.HubConnectionBuilder().withUrl("http://localhost:5221/chathub").build();
-
-        document.getElementById("sendButton").disabled = true;
         const currentUserId = document.getElementById('userData').getAttribute('data-user-id');
         console.log("Current User ID:", currentUserId);
         // SignalR ile gelen mesajları dinle
         connection.start()
                 .then(() => {
-                    document.getElementById("sendButton").disabled = false;
-                    // Kullanıcı ID'si ile bağlan
+                    
+                    // Kullanıcı ID'si ile ChatHub içerisindeki Connection method'una bağlan.
                     connection.invoke("Connect", parseInt(currentUserId)).catch(err => console.error("Failed to connect:", err));
 
+                    // Bağlanan kullanıcının bilgileri. (Opsiyonel olarak eklendi. İhtiyaca göre kullanılacak.)
                     connection.on("Users", function (user) {
                         const userId = user.id;
                         const userName = user.name;
                         const userEmail = user.email;
                     });
 
+                    // ChatHub tarafındaki Messages kısmını listen et.
                     connection.on("Messages", function (chat) {
                         const chatWindow = document.getElementById("chatWindow");
                         const msgClass = chat.userId === parseInt(currentUserId) ? 'sent' : 'received';
-                        const msgElement = `<div class='message ${msgClass}'><p>${chat.message}</p><span>${new Date(chat.date).toLocaleTimeString()}</span></div>`;
+                        const msgElement = `<div class='message ${msgClass}'><p>${chat.message}</p></div>`;
                         chatWindow.insertAdjacentHTML('beforeend', msgElement);
                         chatWindow.scrollTop = chatWindow.scrollHeight;
                     });
@@ -75,8 +98,6 @@
                 .catch(err => console.error("SignalR connection error:", err));
 
         
-        
-
         // Kullanıcı listesini yükle
         function loadUsers() {
             console.log("Loading users...");
@@ -93,7 +114,7 @@
 
         loadUsers();
 
-        // Mesajları yükle
+        // Mesajları yükle (Web Api ile yükle.)
         function loadMessages(userId, toUserId) {
             console.log("Loading messages...");
             $.get(`http://localhost:5221/api/Chats/GetChats?UserId=${userId}&ToUserId=${toUserId}`, function(messages) {
@@ -101,7 +122,7 @@
                 chatWindow.empty();
                 messages.forEach(msg => {
                     const msgClass = msg.userId === parseInt(userId) ? 'sent' : 'received';
-                    chatWindow.append(`<div class='message ${msgClass}'><p>${msg.message}</p><span>${new Date(msg.date).toLocaleTimeString()}</span></div>`);
+                    chatWindow.append(`<div class='message ${msgClass}'><p>${msg.message}</p></div>`);
                 });
                 chatWindow.scrollTop(chatWindow.prop("scrollHeight"));
             }).fail(function() {
@@ -109,7 +130,7 @@
             });
         }
 
-        // Mesaj gönderme
+        // Mesaj gönderme (Web Api'e gönder.)
         $("#sendButton").on("click", function () {
             const message = $("#messageInput").val();
             const toUserId = $(".user-item.active").data("id");
@@ -119,7 +140,7 @@
                 alert("Please select a user and write a message.");
             return;
             }
-
+            
             $.ajax({
                 url: "http://localhost:5221/api/Chats/SendMessage",
                 type: "POST",
@@ -129,8 +150,8 @@
                     ToUserId: toUserId,
                     Message: message
                 }),
-                success: function () {
-                    $("#chatWindow").append(`<div class='message sent'><p>${message}</p><span>${new Date().toLocaleTimeString()}</span></div>`);
+                success: function (chat) {
+                    $("#chatWindow").append(`<div class='message sent'><p>${chat.message}</p></div>`);
                     $("#messageInput").val("");
                     $("#chatWindow").scrollTop($("#chatWindow").prop("scrollHeight"));
                 },
@@ -140,7 +161,7 @@
             });
         });
 
-        // Kullanıcı tıklandığında mesajları yükle
+        // Kullanıcı tıklandığında mesajları yükle (Web Api'den getir.)
         $(document).on("click", ".user-item", function () {
             const toUserId = $(this).data("id");
             const userId = currentUserId;
@@ -152,7 +173,7 @@
             loadMessages(userId, toUserId);
         });
 
-        // Profil butonu
+        // Profil sayfasına yönlendir.
         $("#profileButton").on("click", function () {
             window.location.href = "@Url.Action("RedirectToProfile", "Home")";
         });
