@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChatApp.API.Persistence.Migrations
 {
     [DbContext(typeof(AuthenticationContext))]
-    [Migration("20250115193448_InitialCreate")]
+    [Migration("20250116121624_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -57,7 +57,7 @@ namespace ChatApp.API.Persistence.Migrations
                             Id = 1,
                             Email = "admin@default.com",
                             Name = "Default Admin",
-                            Password = "$2a$11$umPchn0Ep7kTpyja/w0jNuSYjgIBp.nyL3UNUkQoYCdvJu2YBsnBy",
+                            Password = "$2a$11$HRbwYYss4eYRUJCNlnf21eBDju5hEwOaYBJxFOqKKe4rQPCev8g2i",
                             RoleId = 1
                         });
                 });

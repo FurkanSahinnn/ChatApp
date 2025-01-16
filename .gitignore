@@ -281,6 +281,11 @@ FakesAssemblies/
 # GhostDoc plugin setting file
 *.GhostDoc.xml
 
+
+# Hassas bilgiler
+appsettings.json
+appsettings.*.json
+
 # Node.js Tools for Visual Studio
 .ntvs_analysis.dat
 node_modules/
@@ -362,3 +367,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /ChatApp.API/appsettings.json
+

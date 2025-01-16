@@ -76,7 +76,7 @@ namespace ChatApp.API.Persistence.Migrations
             migrationBuilder.InsertData(
                 table: "UserApps",
                 columns: new[] { "Id", "Email", "Name", "Password", "RoleId" },
-                values: new object[] { 1, "admin@default.com", "Default Admin", "$2a$11$umPchn0Ep7kTpyja/w0jNuSYjgIBp.nyL3UNUkQoYCdvJu2YBsnBy", 1 });
+                values: new object[] { 1, "admin@default.com", "Default Admin", "$2a$11$HRbwYYss4eYRUJCNlnf21eBDju5hEwOaYBJxFOqKKe4rQPCev8g2i", 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserApps_RoleId",
