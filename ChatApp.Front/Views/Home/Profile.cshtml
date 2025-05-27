@@ -1,0 +1,61 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "_Layout";
+    var Role = "";
+
+    if (Model.RoleId == 2)
+    {
+        Role = "Member";
+    }
+    else if (Model.RoleId == 1)
+    {
+        Role = "Admin";
+    }
+}
+
+@model UserModel
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-header text-center bg-primary text-white">
+                        <h2>Profile Page</h2>
+                    </div>
+                    <div class="card-body text-center">
+                        
+                        <img src="@Model.ProfileImageUrl" alt="Profile" class="rounded-circle mb-3" style="width:120px; height:120px;">
+
+                        
+                        <p class="h4"><strong>@Model.Name</strong></p>
+                        <p class="text-muted">@Model.Email</p>
+                        <span class="badge @((Role == "Admin" ? "bg-danger" : "bg-secondary"))">@Role</span>
+
+                        
+                        <form asp-action="Logout" asp-controller="Home" method="post" class="mt-4">
+                            <button type="submit" class="btn btn-outline-danger w-100">Logout</button>
+                        </form>
+                    </div>
+                    <div class="card-footer text-center text-muted">
+                        <small>© 2024 Profile Page</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

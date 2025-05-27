@@ -1,0 +1,60 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "_Layout";
+    bool isSuccess = ViewData["IsSuccess"] != null && (bool)ViewData["IsSuccess"];
+    string button_color;
+
+    @if (ViewData["IsSuccess"] == null)
+    {
+        button_color = "btn-primary";
+    }
+    else if (isSuccess)
+    {
+        button_color = "btn-success";
+    }
+    else
+    {
+        button_color = "btn-danger";
+    }
+}
+@model TwoFactorRegisterViewModel
+@section Styles {
+    <link rel="stylesheet" href="/css/authentication.css?v=@DateTime.Now.Ticks" />
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Two Factor Authentication</title>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+</head>
+<body>
+    <div class="form-container">
+
+        <h4>Two Factor Authentication</h4>
+
+
+        <form asp-action="TwoFactorRegister" method="post">
+            
+            <div class="form-group">
+                <label asp-for="VerificationCode"></label>
+                <input asp-for="VerificationCode" class="form-control" />
+                <span asp-validation-for="VerificationCode" class="text-danger"></span>
+            </div>
+            
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group">
+                <input type="submit" class="btn @(button_color)" value="Send" />
+            </div>
+        </form>
+    </div>
+    <div class="alert alert-info">
+        <span>Enter the 5 digit code received to your email address in this field.</span>
+    </div>
+</body>
+
+
+

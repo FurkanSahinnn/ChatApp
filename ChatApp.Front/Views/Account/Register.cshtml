@@ -1,0 +1,78 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model RegisterModel
+@{
+    Layout = "_Layout";
+    bool isSuccess = ViewData["IsSuccess"] != null && (bool)ViewData["IsSuccess"];
+    string button_color;
+
+    @if (ViewData["IsSuccess"] == null)
+    {
+        button_color = "btn-primary";
+    }
+    else if (isSuccess)
+    {
+        button_color = "btn-success";
+    } else
+    {
+        button_color = "btn-danger";
+    }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="/css/authentication.css?v=@DateTime.Now.Ticks" />
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Sign Up</title>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+</head>
+<body>
+    <div class="container form-container">
+        <form class="w-75 mx-auto" method="post" asp-action="Register" asp-controller="Account">
+            <img class="mb-4 rounded-1" src="/images/App-Light-Logo.png" alt="Logo" width="100" height="100">
+            <h1 class="h3 fw-normal">Sign Up</h1>
+
+            <div class="form-group">
+                <label for="@Model.Username" class="form-label">Username:</label>
+                
+                <input type="text" value="" class="form-control" asp-for="@Model.Username" />
+                <span asp-validation-for="@Model.Username" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="@Model.Email" class="form-label">Email:</label>
+                
+                <input type="email" value="" class="form-control" asp-for="@Model.Email" />
+                <span asp-validation-for="@Model.Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="@Model.Password" class="form-label">Password:</label>
+                
+                <input type="password" class="form-control" value="" asp-for="@Model.Password" />
+                <span asp-validation-for="@Model.Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="@Model.ConfirmPassword" class="form-label">Repeat Password:</label>
+                
+                <input type="password" class="form-control" value="" asp-for="@Model.ConfirmPassword" />
+                <span asp-validation-for="@Model.ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="submit" value="Sign Up" class="btn @(button_color) w-50" />
+
+            <p class="mt-5 mb-3 text-muted text-center">© 2024–2025</p>
+        </form>
+    </div>
+    <style src="~/context/js/bootstrap.bundle.min.js"></style>
+</body>
+</html>

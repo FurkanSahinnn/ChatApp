@@ -1,0 +1,60 @@
+﻿body {
+    background-color: #f4f4f4; /* Arka plan rengi */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Sayfa boyutunu tam ekran yap */
+    margin: 0;
+}
+
+.form-container {
+    background-color: #ffffff; /* Form arkaplan rengi */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px; /* Maksimum genişlik */
+}
+
+.form-container img {
+    display: block;
+    margin: 0 auto;
+    height: 80%;
+    width: 80%;
+}
+
+.form-container h1 {
+    text-align: center; /* Başlığı ortala */
+    margin-bottom: 20px;
+}
+
+.form-group {
+    display: grid;
+    align-items: center; /* Label ve input'u hizala */
+    margin-bottom: 15px;
+}
+
+.form-group span {
+    display: grid;
+}
+
+.form-group label {
+    flex: 0.5; /* Label genişliği */
+    text-align: left; /* Label'ı input ile hizala */
+    margin-right: 10px; /* Label ile input arasında boşluk bırak */
+    justify-content: left;
+}
+
+.form-group input {
+    display: inline-block;
+    padding: 5px 10px;
+    flex: 2;
+    text-align: left;
+}
+
+/* Button ile alakalı */
+.form-container .btn {
+    display: block;
+    margin: 20px auto;
+    width: 100%;
+}
